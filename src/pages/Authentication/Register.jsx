@@ -12,6 +12,8 @@ const Register = () => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [showPass, setShowPass] = useState(false);
 
   const navigate = useNavigate();
@@ -22,22 +24,22 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const res = await axios.post("http://localhost:3000/api/auth/register", {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
       });
 
-      if (res.status === 201) {
+      if (res.status === 201 || res.status === 200) {
         toast.success("Registered successfully!");
         setFormData({ firstName: "", lastName: "", email: "", password: "" });
-        navigate("/login");
+        navigate("/otp");
       }
     } catch (error) {
-      console.log("error", error);
+      setLoading(false);
       toast.error(error.response?.data?.message || "Registration failed");
     }
   };
@@ -110,6 +112,7 @@ const Register = () => {
                 type={showPass ? "password" : "text"}
                 name="password"
                 required
+                minLength={6}
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
@@ -131,9 +134,12 @@ const Register = () => {
           <div>
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition-all duration-300"
+              disabled={loading}
+              className={`w-full bg-blue-500 text-white font-semibold py-2 rounded-lg transition-all duration-300 cursor-pointer ${
+                loading ? "bg-blue-300 cursor-not-allowed" : "hover:bg-blue-600"
+              }`}
             >
-              Register
+              {loading ? "Creating Account... " : "Register"}
             </button>
           </div>
         </form>
