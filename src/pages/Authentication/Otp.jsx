@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import ResendOtp from "./ResendOtp";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const otpLength = new Array(6).fill("");
 
@@ -8,6 +10,9 @@ const Otp = () => {
   const [otpFields, setOtpFields] = useState(otpLength);
   const ref = useRef([]);
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const email = location?.state?.email;
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -51,6 +56,29 @@ const Otp = () => {
     ref.current[0].focus();
   }, []);
 
+  useEffect(() => {
+    if (!email) {
+      toast.error("Unauthorized access, please register first.");
+      navigate("/register");
+    }
+  }, [email, navigate]);
+
+  const handleClicked = async () => {
+    try {
+      const res = await axios.post("http://localhost:3000/api/auth/verifyOtp", {
+        otp: otpFields.join(""),
+        email: email,
+      });
+      if (res.status === 200) {
+        toast.success("otp verify registration successfull");
+        navigate("/login");
+        setOtpFields(otpLength);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300">
       <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
@@ -74,12 +102,10 @@ const Otp = () => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <ResendOtp />
+          <ResendOtp email={email} />
 
           <button
-            onClick={() => {
-              navigate("/login");
-            }}
+            onClick={handleClicked}
             className="w-full py-2 bg-indigo-500 text-white font-semibold rounded-lg hover:bg-indigo-600 transition"
           >
             Verify OTP

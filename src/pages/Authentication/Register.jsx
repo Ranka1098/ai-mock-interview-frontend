@@ -34,9 +34,15 @@ const Register = () => {
       });
 
       if (res.status === 201 || res.status === 200) {
-        toast.success("Registered successfully!");
+        toast.success("OTP Send Your Email", {
+          position: "top-right",
+          autoClose: 1500,
+          theme: "colored",
+        });
         setFormData({ firstName: "", lastName: "", email: "", password: "" });
-        navigate("/otp");
+        navigate("/otp", {
+          state: { email: formData.email.trim().toLowerCase() },
+        });
       }
     } catch (error) {
       setLoading(false);

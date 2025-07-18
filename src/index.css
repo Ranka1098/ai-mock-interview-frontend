@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @import "react-toastify/dist/ReactToastify.css";
+/* In index.css or global CSS file */
+.Toastify__toast-container {
+  z-index: 9999 !important;
+}
