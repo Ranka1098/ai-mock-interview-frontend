@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaRegEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const [showPass, setShowPass] = useState(false);
 
@@ -13,9 +18,30 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.f)
+    try {
+      setLoading(true);
+
+      const res = await axios.post("http://localhost:3000/api/auth/login", {
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      });
+
+      if (res.status === 200) {
+        toast.success("login in successfully");
+        navigate("/home");
+        setFormData({
+          email: "",
+          password: "",
+        });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "failed to login");
+    } finally {
+      setLoading(false);
+    }
+    if (formData)
       setFormData({
         email: "",
         password: "",
@@ -57,12 +83,12 @@ const Login = () => {
             </label>
             <div>
               <input
-                type={showPass ? "password" : "text"}
+                type={showPass ? "text" : "password"}
                 name="password"
                 required
                 value={formData.password}
                 onChange={handleChange}
-                autocomplete="current-password"
+                autoComplete="current-password"
                 placeholder="Enter Password Here..."
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
@@ -71,7 +97,7 @@ const Login = () => {
                 type="button"
                 onClick={() => setShowPass(!showPass)}
               >
-                {showPass ? "show" : "hide"}
+                {showPass ? <FaRegEye size={20} /> : <FaEyeSlash size={20} />}
               </button>
             </div>
           </div>
@@ -80,9 +106,10 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="w-full bg-purple-500 text-white font-semibold py-2 rounded-lg hover:bg-purple-600 transition-all duration-300"
+              disabled={loading}
+              className="w-full bg-purple-500 cursor-pointer text-white font-semibold py-2 rounded-lg hover:bg-purple-600 transition-all duration-300"
             >
-              Sign In
+              {loading ? "Wait for signin..." : "Sign In"}
             </button>
           </div>
         </form>
