@@ -4,12 +4,16 @@ import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axios from "axios";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [user, setUser] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const [showPass, setShowPass] = useState(false);
@@ -28,9 +32,11 @@ const Login = () => {
         password: formData.password,
       });
 
+      setUser(res.data);
+
       if (res.status === 200) {
         toast.success("login in successfully");
-        navigate("/home");
+        navigate("/");
         setFormData({
           email: "",
           password: "",
@@ -41,6 +47,8 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+
+    console.log(user);
     if (formData)
       setFormData({
         email: "",
@@ -56,6 +64,15 @@ const Login = () => {
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Login</h1>
           <h3 className="text-gray-600">Welcome back to AI Mocked Interview</h3>
+        </div>
+        <div>
+          <GoogleLoginButton />
+        </div>
+
+        <div className="flex items-center gap-4 my-6">
+          <hr className="flex-grow border-gray-300" />
+          <span className="text-gray-500 text-sm">or</span>
+          <hr className="flex-grow border-gray-300" />
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
