@@ -7,11 +7,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const GoogleLoginButton = () => {
-  const [person, setPerson] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
+    setError(null);
+    setLoading(true);
     try {
       const res = await signInWithPopup(auth, provider);
       const userData = res.user;
@@ -24,8 +27,6 @@ const GoogleLoginButton = () => {
         lastName: userData.displayName?.split(" ")[1] || "",
       };
 
-      setPerson(userInfo); // Optional: only if you need it later
-
       // ✅ Use userInfo directly
       const response = await axios.post(
         "http://localhost:3000/api/auth/googleLogin",
@@ -34,16 +35,31 @@ const GoogleLoginButton = () => {
           firstName: userInfo.firstName,
           lastName: userInfo.lastName,
           photoURL: userInfo.photoURL,
+        },
+        {
+          withCredentials: true, // ✅ ye hona chahiye
         }
       );
 
       if (response.status === 200) {
         navigate("/");
+        toast.success("google login successfully");
       }
       console.log("Google backend response", response.data);
-    } catch (error) {
-      console.error("Google login error:", error);
-      toast.error(error.response?.data?.message);
+    } catch (err) {
+      console.error("Google login error:", err);
+
+      if (err.message === "Network Error") {
+        setError(
+          "Server not reachable. Please check your internet or try again later."
+        );
+      } else {
+        setError(err.response?.data?.message || "Login failed. Try again.");
+      }
+
+      toast.error("Login failed.");
+    } finally {
+      setLoading(false);
     }
   };
 

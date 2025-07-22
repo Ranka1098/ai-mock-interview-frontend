@@ -48,7 +48,6 @@ const Login = () => {
       setLoading(false);
     }
 
-    console.log(user);
     if (formData)
       setFormData({
         email: "",
