@@ -33,6 +33,8 @@ const Login = () => {
       });
 
       setUser(res.data);
+      const token = res.data.token; // 🟢 Token from backend
+      localStorage.setItem("token", token);
 
       if (res.status === 200) {
         toast.success("login in successfully");

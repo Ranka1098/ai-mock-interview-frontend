@@ -45,9 +45,9 @@ const GoogleLoginButton = () => {
         navigate("/");
         toast.success("google login successfully");
       }
-      console.log("Google backend response", response.data);
     } catch (err) {
       console.error("Google login error:", err);
+      toast.error(err.response?.data?.message || "Login failed. Try again.");
 
       if (err.message === "Network Error") {
         setError(
@@ -56,8 +56,6 @@ const GoogleLoginButton = () => {
       } else {
         setError(err.response?.data?.message || "Login failed. Try again.");
       }
-
-      toast.error("Login failed.");
     } finally {
       setLoading(false);
     }

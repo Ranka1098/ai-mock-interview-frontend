@@ -13,8 +13,10 @@ const Home = () => {
       });
 
       if (res.status === 200) {
-        toast.success("logout successfully");
-        navigate("/login");
+        localStorage.removeItem("token");
+
+        toast.success("Logout successful");
+        navigate("/login"); // ✅ Hard redirect to login
       }
     } catch (error) {
       toast.success(error.response?.data?.message);
@@ -26,8 +28,6 @@ const Home = () => {
       const res = await axios.get("http://localhost:3000/api/auth/profile", {
         withCredentials: true,
       });
-
-      console.log("User data:", res.data.user);
     } catch (error) {
       console.error("Error fetching user:", error.response?.data);
       toast.error("Session expired or not authorized");

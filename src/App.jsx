@@ -5,32 +5,57 @@ import Login from "./pages/Authentication/Login";
 import ForgetPassword from "./pages/Authentication/ForgetPassword";
 import VerifyPassword from "./pages/Authentication/VerifyPassword";
 import Home from "./pages/Authentication/Home";
-
+import PublicRoutes from "./routes/PublicRoutes";
+import ProtectRoute from "./routes/ProtectRoute";
 const App = () => {
   const appRouter = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
+      element: (
+        <ProtectRoute>
+          <Home />
+        </ProtectRoute>
+      ),
     },
     {
       path: "/register",
-      element: <Register />,
+      element: (
+        <PublicRoutes>
+          <Register />
+        </PublicRoutes>
+      ),
     },
     {
       path: "/otp",
-      element: <Otp />,
+      element: (
+        <PublicRoutes>
+          <Otp />
+        </PublicRoutes>
+      ),
     },
     {
       path: "/login",
-      element: <Login />,
+      element: (
+        <PublicRoutes>
+          <Login />
+        </PublicRoutes>
+      ),
     },
     {
       path: "/forgetPassword",
-      element: <ForgetPassword />,
+      element: (
+        <PublicRoutes>
+          <ForgetPassword />
+        </PublicRoutes>
+      ),
     },
     {
       path: "/verifyPassword",
-      element: <VerifyPassword />,
+      element: (
+        <PublicRoutes>
+          <VerifyPassword />
+        </PublicRoutes>
+      ),
     },
   ]);
 
