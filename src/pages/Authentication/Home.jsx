@@ -6,9 +6,19 @@ import axios from "axios";
 const Home = () => {
   const navigate = useNavigate();
 
-  const handleLogOut = () => {
-    toast.success("logout successfully");
-    navigate("/login");
+  const handleLogOut = async () => {
+    try {
+      const res = await axios.post("http://localhost:3000/api/auth/logout", {
+        withCredentials: true,
+      });
+
+      if (res.status === 200) {
+        toast.success("logout successfully");
+        navigate("/login");
+      }
+    } catch (error) {
+      toast.success(error.response?.data?.message);
+    }
   };
 
   const getUser = async () => {
