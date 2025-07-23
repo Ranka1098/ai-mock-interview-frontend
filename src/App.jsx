@@ -7,6 +7,7 @@ import VerifyPassword from "./pages/Authentication/VerifyPassword";
 import Home from "./pages/Authentication/Home";
 import PublicRoutes from "./routes/PublicRoutes";
 import ProtectRoute from "./routes/ProtectRoute";
+import ErrorPage from "./pages/Authentication/ErrorPage";
 const App = () => {
   const appRouter = createBrowserRouter([
     {
@@ -14,6 +15,14 @@ const App = () => {
       element: (
         <ProtectRoute>
           <Home />
+        </ProtectRoute>
+      ),
+    },
+    {
+      path: "*",
+      element: (
+        <ProtectRoute>
+          <ErrorPage />
         </ProtectRoute>
       ),
     },
